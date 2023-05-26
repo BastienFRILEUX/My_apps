@@ -22,6 +22,11 @@ from pycaret.classification import compare_models as compare_models_class
 from pycaret.classification import save_model as save_model_class
 from pycaret.classification import plot_model as plot_model_class 
 
+from pycaret.clustering import setup as setup_cluster
+from pycaret.clustering import create_model, assign_model
+from pycaret.clustering import save_model as save_model_cluster
+from pycaret.clustering import plot_model as plot_model_cluster
+
 url = "https://www.linkedin.com/in/bastien-frileux-48612b250/" 
 
 import base64
@@ -45,8 +50,8 @@ def main():
 
     selected = option_menu(
             menu_title=None,
-            options=["Modélisation", "Classification", "Régression", "Graphiques"],
-            icons=["house", "star", "star", "bar-chart-line-fill"],
+            options=["Modélisation", "Classification", "Régression", "Segmentation", "Graphiques"],
+            icons=["house", "star", "star", "star", "bar-chart-line-fill"],
             menu_icon="cast",
             default_index=0,
             orientation="horizontal")
@@ -62,11 +67,11 @@ def main():
             "**Cette application permet de produire des modèles de Machine Learning sans code**\n"
             "1. Charger votre fichier (format csv)\n"
             "2. Cliquer sur le bouton *Profil* pour générer une revue détaillée du dataset\n"
-            "3. Choisir la variable cible\n"
-            "4. Choisir la tâche de Machine Learning (Classification ou Régression)\n"
+            "3. Choisir la tâche (Classification, Régression ou clustering)\n"
+            "4. Choisir la variable cible\n"        
             "5. Cliquer sur *Run model* et visualiser les résultats\n"
             "6. Télécharger le modèle sur votre ordinateur\n"
-            "7. Passer à l'onglet *Classification* ou *Régression* pour faire des prédictions"
+            "7. Passer à l'onglet *Classification* ou *Régression* pour faire des prédictions ou sur *Clustering* pour récupérer les clusters de votre fichier"
         )
 
         file = st.file_uploader("**Charger votre dataset au format csv**", type=["csv"])
@@ -83,10 +88,12 @@ def main():
                 profile_df = data.profile_report()
                 st_profile_report(profile_df)
 
-            target = st.selectbox("**Choisissez la variable cible**", data.columns)
-            task = st.selectbox("**Choisissez la tâche**", ["Classification","Régression"])
+            task = st.selectbox("**Choisissez la tâche**", ["Classification","Régression","Clustering"])
+            
 
             if task == "Régression":
+                target = st.selectbox("**Choisissez la variable cible**", data.columns)
+                
                 if st.button("Run model"):
                     s_reg = setup_reg(data, target=target, session_id=42)
                     model_reg = compare_models_reg()
@@ -106,6 +113,7 @@ def main():
                         st.download_button("Télécharger le meilleur modèle", f, file_name="best_reg_model.pkl")
 
             if task == "Classification":
+                target = st.selectbox("**Choisissez la variable cible**", data.columns)
                 if st.button("Run model"):
                     s_class = setup_class(data, target=target, session_id=42)
                     model_class = compare_models_class(include=["et","lr","rf","gbc"])
@@ -139,6 +147,45 @@ def main():
                     with open("best_class_model.pkl", "rb") as f:
                         st.download_button("Télécharger le meilleur modèle", f, file_name="best_class_model.pkl")
                         
+            if task == "Clustering":
+                if st.button("Run model"):
+                    s_cluster = setup_cluster(data, session_id=42)
+                    kmeans    = create_model("kmeans")
+                    save_model_cluster(kmeans, "best_cluster_model")
+                    st.success("Le modèle de clustering a été contruit avec succès")
+
+                    #Affichage des résultats
+                    col5, col6 = st.columns(2)
+                    with col5:
+                        st.write("Courbe Elbow")
+                        plot_model_cluster(kmeans, plot = 'elbow', save=True) 
+                        st.image("Elbow Plot.png")
+
+                    with col6:
+                        st.write("Courbe de silhouette")
+                        plot_model_cluster(kmeans, plot="silhouette", save=True)
+                        st.image("Silhouette Plot.png")
+
+                    #Téléchargement du modèle
+                    with open("best_cluster_model.pkl", "rb") as f:
+                        st.download_button("Télécharger le meilleur modèle", f, file_name="best_cluster_model.pkl")
+                    
+                    #Téléchargement du fichier avec les clusters
+                    results = assign_model(kmeans)
+                    
+                    def convert_df(df):
+                        return df.to_csv(index=False).encode('utf-8')
+
+                    csv = convert_df(results)
+
+                    st.download_button(
+                           "Télécharge le fichier avec les clusters",
+                           csv,
+                           "clusters.csv",
+                           "text/csv",
+                           key='download-csv'
+                        )
+                                        
     if selected == "Classification":
         
         add_bg_from_local('iris2.jpg') 
@@ -248,13 +295,45 @@ def main():
         st.subheader("**Prédisons le prix pour ces paramètres :**")
         st.write(input_parametres)
 
-        loaded_model = joblib.load("best_reg_model.pkl")
+        loaded_model = joblib.load("best_reg_model.png")
         y_pred = loaded_model.predict(input_parametres)
         st.subheader(f'**Le prix de cette voiture est estimé à :blue[{round(y_pred[0],2)}$]**')
   
+    if selected == "Segmentation": 
+        
+        add_bg_from_local('segmentation-client.jpg') 
+    
+        st.title(":green[Insérer votre nouveau fichier client]")
+
+        file_cluster = st.file_uploader("**:green[Charger fichier format csv]**", type=["csv"])
+
+        if file_cluster is not None:
+            data_cluster = pd.read_csv(file_cluster, sep=";")
+        
+            loaded_model = joblib.load("best_cluster_model.pkl")
+            
+            labels_pred = loaded_model.predict(data_cluster)
+            
+            data_cluster["Clusters"] = labels_pred
+            
+            st.write(data_cluster.head())
+            
+            def recup_df(df):
+                return df.to_csv(index=False).encode('utf-8')
+
+            csv_recup = recup_df(data_cluster)
+
+            st.download_button(
+                "Télécharge le fichier avec les clusters",
+                csv_recup,
+                "clusters.csv",
+                "text/csv",
+                key='download-csv'
+                )
+            
     if selected == "Graphiques":
          
-        add_bg_from_local('fond.png')
+        add_bg_from_local('stars.jpg')
             
         st.title("Réaliser vos graphiques")
         
