@@ -5,6 +5,7 @@
 import streamlit as st
 import pandas as pd
 import pandas_profiling
+import numpy as np
 import joblib
 from PIL import Image
 from streamlit_pandas_profiling import st_profile_report
@@ -210,7 +211,7 @@ def main():
         carlength        = st.sidebar.slider("Valeur de longueur de la voiture", cars["carlength"].min(), cars["carlength"].max(), 170.0)
         carwidth         = st.sidebar.slider("Valeur de largeur de la voiture", cars["carwidth"].min(), cars["carwidth"].max(), 70.0)
         carheight        = st.sidebar.slider("Valeur de hauteur de la voiture", cars["carheight"].min(), cars["carheight"].max(), 53.0)
-        curbweight       = st.sidebar.slider("Valeur de poids à vide", 0, 2000)
+        curbweight       = st.sidebar.slider("Valeur de poids à vide", np.ceil(cars["curbweight"].min()).astype("int"), np.ceil(cars["curbweight"].max()).astype("int"))
         enginesize       = st.sidebar.slider("Valeur de taille du moteur", cars["enginesize"].min(), cars["enginesize"].max())   
         boreratio        = st.sidebar.slider("Valeur de rapport d'alésage", cars["boreratio"].min(), cars["boreratio"].max())
         stroke           = st.sidebar.slider("Valeur de stroke", cars["stroke"].min(), cars["stroke"].max())
