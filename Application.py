@@ -210,7 +210,7 @@ def main():
         carlength        = st.sidebar.slider("Valeur de longueur de la voiture", cars["carlength"].min(), cars["carlength"].max(), 170.0)
         carwidth         = st.sidebar.slider("Valeur de largeur de la voiture", cars["carwidth"].min(), cars["carwidth"].max(), 70.0)
         carheight        = st.sidebar.slider("Valeur de hauteur de la voiture", cars["carheight"].min(), cars["carheight"].max(), 53.0)
-        curbweight       = st.sidebar.slider("Valeur de poids à vide", cars["curbweight"].min().astype("int"), cars["curbweight"].max().astype("int"))
+        curbweight       = st.sidebar.slider("Valeur de poids à vide", 0, 2000)
         enginesize       = st.sidebar.slider("Valeur de taille du moteur", cars["enginesize"].min(), cars["enginesize"].max())   
         boreratio        = st.sidebar.slider("Valeur de rapport d'alésage", cars["boreratio"].min(), cars["boreratio"].max())
         stroke           = st.sidebar.slider("Valeur de stroke", cars["stroke"].min(), cars["stroke"].max())
