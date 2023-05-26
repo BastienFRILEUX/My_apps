@@ -37,7 +37,7 @@ def add_bg_from_local(image_file):
     """,
     unsafe_allow_html=True
     )
-add_bg_from_local('C:\Présentation streamlit\stars.jpg') 
+#add_bg_from_local('C:\Présentation streamlit\stars.jpg') 
 
 def main():   
 
@@ -139,7 +139,7 @@ def main():
                         
     if selected == "Classification":
         
-        add_bg_from_local('C:\Présentation streamlit\iris2.jpg') 
+        #add_bg_from_local('C:\Présentation streamlit\iris2.jpg') 
     
         st.title("Prédictions de l'espèce d'Iris")
         
@@ -167,7 +167,7 @@ def main():
     
     if selected == "Régression":
          
-        add_bg_from_local('C:\Présentation streamlit\image_car2.png')  
+        #add_bg_from_local('C:\Présentation streamlit\image_car2.png')  
 
         st.title("Prédictions du prix d'une voiture")
         
