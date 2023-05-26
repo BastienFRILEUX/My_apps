@@ -5,8 +5,9 @@
 import streamlit as st
 import pandas as pd
 import pandas_profiling
-import numpy as np
+import plotly.express as px
 import joblib
+import numpy as np
 from PIL import Image
 from streamlit_pandas_profiling import st_profile_report
 from streamlit_option_menu import option_menu
@@ -44,8 +45,8 @@ def main():
 
     selected = option_menu(
             menu_title=None,
-            options=["Modélisation", "Classification", "Régression"],
-            icons=["house", "star", "star"],
+            options=["Modélisation", "Classification", "Régression", "Graphiques"],
+            icons=["house", "star", "star", "bar-chart-line-fill"],
             menu_icon="cast",
             default_index=0,
             orientation="horizontal")
@@ -207,6 +208,7 @@ def main():
         fuelsystem     = st.sidebar.selectbox("Choisir fuel system", fuelsystem_select)
 
         #Variables continues  
+        #Variables continues  
         wheelbase        = st.sidebar.slider("Valeur de wheelbase", cars["wheelbase"].min(), cars["wheelbase"].max(), 100.0)
         carlength        = st.sidebar.slider("Valeur de longueur de la voiture", cars["carlength"].min(), cars["carlength"].max(), 170.0)
         carwidth         = st.sidebar.slider("Valeur de largeur de la voiture", cars["carwidth"].min(), cars["carwidth"].max(), 70.0)
@@ -249,6 +251,73 @@ def main():
         loaded_model = joblib.load("best_reg_model.pkl")
         y_pred = loaded_model.predict(input_parametres)
         st.subheader(f'**Le prix de cette voiture est estimé à :blue[{round(y_pred[0],2)}$]**')
+  
+    if selected == "Graphiques":
+         
+        add_bg_from_local('fond.png')
+            
+        st.title("Réaliser vos graphiques")
+        
+        st.sidebar.write("[Auteur: Bastien FRILEUX](%s)" % url)
+        
+        st.sidebar.header("Choix du graphique")
+        graphe_choice = st.sidebar.selectbox(
+            "Choisir le graphique de votre choix",
+            ("Nuage de points", "Diagramme à barre", "Diagramme circulaire"))
+        
+        graph = st.file_uploader("**Charger votre dataset pour faire vos propres graphiques**", type=["csv"])
+        
+        if graph is not None:
+            df_graph = pd.read_csv(graph, sep=";")
+            
+            numeric_cols = df_graph.select_dtypes(exclude="object").columns.to_list()
+            categ_cols   = df_graph.select_dtypes(include="object").columns.to_list()
+            
+            if graphe_choice == "Nuage de points":
+            
+                var_x     = st.sidebar.selectbox("Choisir la variable numérique en abscisse", numeric_cols)
+                var_y     = st.sidebar.selectbox("Choisir la variable numérique en ordonné", numeric_cols)
+                var_categ = st.sidebar.selectbox("Choisir la variable catégorielle pour les couleurs", categ_cols)
+
+                fig1 = px.scatter(
+                    data_frame = df_graph,
+                    x          = var_x,
+                    y          = var_y,
+                    color      = var_categ)
+
+                fig1.update_layout(title_text=str(var_x) + " Vs " + str(var_y), title_x=0.3)
+
+                st.plotly_chart(fig1)
+                
+            if graphe_choice == "Diagramme à barre":
+            
+                var_y     = st.sidebar.selectbox("Choisir la variable numérique", numeric_cols)
+                var_categ = st.sidebar.selectbox("Choisir la variable catégorielle", categ_cols)
+
+                fig2 = px.bar(
+                    data_frame = df_graph,
+                    x          = var_categ,
+                    y          = var_y)
+
+                fig2.update_layout(title_text=f"{var_y} en fonction de {var_categ}", title_x=0.3)
+
+                st.plotly_chart(fig2)
+        
+            if graphe_choice == "Diagramme circulaire":
+                
+                var_categ = st.sidebar.selectbox("Choisir la variable à représenter", categ_cols)
+
+                compteur = df_graph[var_categ].value_counts()
+                
+                fig3 = px.pie(
+                    data_frame = compteur, 
+                    values     = compteur.values, 
+                    names      = compteur.index)
+
+                fig3.update_layout(title_text=f"Répartition de {var_categ}", title_x=0.3)
+
+                st.plotly_chart(fig3)
+        
         
 if __name__ == '__main__':
     main()
