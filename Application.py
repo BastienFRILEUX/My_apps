@@ -71,7 +71,8 @@ def main():
             "4. Choisir la variable cible\n"        
             "5. Cliquer sur *Run model* et visualiser les résultats\n"
             "6. Télécharger le modèle sur votre ordinateur\n"
-            "7. Passer à l'onglet *Classification* ou *Régression* pour faire des prédictions ou sur *Clustering* pour récupérer les clusters de votre fichier"
+            "7. Passer à l'onglet *Classification* ou *Régression* pour faire des prédictions ou sur *Clustering* pour récupérer les clusters de votre fichier\n\n"
+            "Le dernier onglet vous permet de réaliser rapidement des graphiques téléchargeables sur vos données"
         )
 
         file = st.file_uploader("**Charger votre dataset au format csv**", type=["csv"])
