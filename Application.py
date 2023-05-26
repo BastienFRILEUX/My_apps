@@ -210,13 +210,13 @@ def main():
         carlength        = st.sidebar.slider("Valeur de longueur de la voiture", cars["carlength"].min(), cars["carlength"].max(), 170.0)
         carwidth         = st.sidebar.slider("Valeur de largeur de la voiture", cars["carwidth"].min(), cars["carwidth"].max(), 70.0)
         carheight        = st.sidebar.slider("Valeur de hauteur de la voiture", cars["carheight"].min(), cars["carheight"].max(), 53.0)
-        curbweight       = st.sidebar.slider("Valeur de poids à vide", cars["curbweight"].min(), cars["curbweight"].max(), 2500.0)
-        enginesize       = st.sidebar.slider("Valeur de taille du moteur", cars["enginesize"].min(), cars["enginesize"].max(), 200.0)   
-        boreratio        = st.sidebar.slider("Valeur de rapport d'alésage", cars["boreratio"].min(), cars["boreratio"].max(), 3.0)
-        stroke           = st.sidebar.slider("Valeur de stroke", cars["stroke"].min(), cars["stroke"].max(), 3.0)
-        compressionratio = st.sidebar.slider("Valeur de ratio de compression", cars["compressionratio"].min(), cars["compressionratio"].max(), 15.0)
-        horsepower       = st.sidebar.slider("Valeur de puissance", cars["horsepower"].min(), cars["horsepower"].max(), 150.0)
-        peakrpm          = st.sidebar.slider("Valeur de vitesse de pointe", cars["peakrpm"].min(), cars["peakrpm"].max(), 5500.0)
+        curbweight       = st.sidebar.slider("Valeur de poids à vide", cars["curbweight"].min(), cars["curbweight"].max())
+        enginesize       = st.sidebar.slider("Valeur de taille du moteur", cars["enginesize"].min(), cars["enginesize"].max())   
+        boreratio        = st.sidebar.slider("Valeur de rapport d'alésage", cars["boreratio"].min(), cars["boreratio"].max())
+        stroke           = st.sidebar.slider("Valeur de stroke", cars["stroke"].min(), cars["stroke"].max())
+        compressionratio = st.sidebar.slider("Valeur de ratio de compression", cars["compressionratio"].min(), cars["compressionratio"].max())
+        horsepower       = st.sidebar.slider("Valeur de puissance", cars["horsepower"].min(), cars["horsepower"].max())
+        peakrpm          = st.sidebar.slider("Valeur de vitesse de pointe", cars["peakrpm"].min(), cars["peakrpm"].max())
 
         data={'fueltype': fueltype,
               'aspiration': aspiration,
