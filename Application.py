@@ -296,7 +296,7 @@ def main():
         st.subheader("**Prédisons le prix pour ces paramètres :**")
         st.write(input_parametres)
 
-        loaded_model = joblib.load("best_reg_model.png")
+        loaded_model = joblib.load("best_reg_model.pkl")
         y_pred = loaded_model.predict(input_parametres)
         st.subheader(f'**Le prix de cette voiture est estimé à :blue[{round(y_pred[0],2)}$]**')
   
